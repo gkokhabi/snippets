@@ -1,1 +1,52 @@
 
+//Below is a common hash function
+
+function hash (key, size) { //the size is needed to compute the unique number based off of how many buckets we set in the hash table constructor 
+  let hashedKey = 0; //we want to return the hashKey which will serve as the unique id for the output
+  for (let i = 0; i < key.length; i++) { //tip: think of the key of a key-value pair as a label for values that belong to a key
+    hashedKey += key.charCodeAt(i) //the charCodeAt is a method that takes in an input and automatically assigns it to a value, by taking a character at a position and spit out an integer value
+  }
+  return hashedKey % size; //we take the module by the number of buckets we want, to prevent the hash table from getting too big
+}
+
+class HashTable {
+  constructor() { //when you invoke the class, you create a new instance of the object
+    this.SIZE = 22; //this will determine the number of buckets we want in our hash table (this number can be determined by you)
+    this.storage = Array(this.SIZE); //creating the array filled with the number of buckets we created (equal to this.SIZE)
+    //side note: we are using the this keyword on size, is an implementation of object oriented programming model
+    for (let i = 0; i < this.storage.length; i++) { //this loop will populate the bucket with the Map object and it's properties
+      this.storage[i] = new Map()
+    }
+  }
+
+  add(key, value) { //takes in a key and a value to create an output
+    let index = hash(key, this.SIZE); //to get the index for where our key-value pair will be, we want to create that unique identifer by invoking the hash function
+    this.storage[index].set(key, value); //after we create the identifer, we are able to use the Map method 'set' to access the bucket at the index
+  }
+
+  find(key) { 
+    let index = hash(key, this.SIZE); //to get the index for where our key-value pair will be, we want to create that unique identifer by invoking the hash function
+    return this.storage[index].get(key); //we are able to use the 'get' method built into Map, from the hashed index and return it 
+  }
+
+  delete(key) {
+    let index = hash(key, this.SIZE); //to get the index for where our key-value pair will be, we want to create that unique identifer by invoking the hash function
+    let deleted = this.storage[index].get(key); //storing the value we want to delete in a variable for best practice, we are using a Map method 'get' to obtain the value we want to delete at the hashed index
+    this.storage[index].delete(key) //we want to go into the storage and actually delete the key using the 'delete' method that has been built into Map
+    return deleted;
+  }
+}
+
+const hashTable = new HashTable() //creating a new instance of a hash table
+
+//adding to the hash table
+console.log(hashTable.add('Josh', 'leo')); 
+console.log(hashTable.add('Edwin', 'libra'));
+console.log(hashTable.add('Justin', 'aries'));
+
+console.log(hashTable.find('Edwin')); //returns "libra"
+console.log(hashTable.find('Justin')); //returns "aries"
+
+console.log(hashTable.has('Justin')); //returns true
+
+console.log(hashTable.delete('Josh')); //returns "leo"
